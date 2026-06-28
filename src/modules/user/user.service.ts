@@ -1,13 +1,8 @@
 import bcrypt from "bcryptjs";
 import config from "../../config";
 import { prisma } from "../../lib/prisma";
+import type { UserData } from "./user.typses";
 
-interface UserData {
-	name: string;
-	email: string;
-	password: string;
-	profile_image: string;
-}
 const registerUserIntoDB = async (payload: UserData) => {
 	const { email, name, password, profile_image } = payload;
 	const userExist = await prisma.user.findUnique({
@@ -16,7 +11,7 @@ const registerUserIntoDB = async (payload: UserData) => {
 		},
 	});
 	if (userExist) {
-		throw Error("user already exists");
+		throw Error("user with this Email already exists");
 	}
 	const hashPassword = await bcrypt.hash(
 		password,
